@@ -29,7 +29,7 @@ def findARestaurant(mealType: str, location: str) -> dict:
 	CLIENT_ID = config["CLIENT_ID"]
 	CLIENT_SECRET = config["CLIENT_SECRET"]
 
-	latitude, longitude = getGeocodeLocation(location)
+	latitude, longitude = getGeocodeLocation(location) # Function to get lat, long coordinates from google map's API
 	locationString = str(latitude) + ", " + str(longitude)
 	params = dict(
 		client_id=CLIENT_ID,
@@ -63,8 +63,8 @@ def findARestaurant(mealType: str, location: str) -> dict:
 			photos_data = resp.json()
 			if photos_data["meta"]["code"] == 200:
 				first_photo = photos_data.get("response").get("photos").get("items")
-				if len(first_photo) != 0 or first_photo is not None:
-					image_url = first_photo["prefix"] + "300x300" + first_photo["suffix"]
+				if len(first_photo) != 0:
+					image_url = first_photo[0]["prefix"] + "300x300" + first_photo[0]["suffix"]
 				else:
 					image_url = "https://st4.depositphotos.com/14953852/22772/v/600/depositphotos_227725020-stock-illustration-no-image-available-icon-flat.jpg"
 				info_restaurant["Image url"] = image_url
@@ -72,8 +72,8 @@ def findARestaurant(mealType: str, location: str) -> dict:
 				raise Exception(f'Error type: {photos_data["meta"]["errorType"]}, Code: {photos_data["meta"]["code"]}')
 			#Print values of the first restaurant
 			for key, value in info_restaurant.items():
-				print(f"{key}: {value}")
-			print('\n')
+				print(f"{key}: {value}", end="")
+			print("-" * 100)
 		else:
 			print(f'Error type: {data["meta"]["errorType"]}, Code: {data["meta"]["code"]}')
 	except requests.HTTPError as http_err:
